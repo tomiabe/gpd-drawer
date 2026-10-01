@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Good Pair Days Drawer, Tightened</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f6f1e7;
+    --paper-2:#efe7d8;
+    --ink:#211a16;
+    --ink-soft:#6b5e52;
+    --wine:#7b1733;
+    --wine-deep:#5c0f26;
+    --gold:#c69a3f;
+    --line:#e0d4c0;
+    --card:#fffdf8;
+    --good:#2f6b45;
+    --bad:#9a3b2e;
+    --shadow:0 24px 60px -18px rgba(40,20,10,.45);
+    --serif:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  body{min-height:100vh;padding:34px 20px 90px}
+  .wrap{max-width:1180px;margin:0 auto}
+
+  .masthead{margin-bottom:22px}
+  .kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--wine);font-weight:700}
+  h1{font-family:var(--serif);font-size:clamp(28px,4.4vw,46px);line-height:1.02;margin:8px 0 10px;letter-spacing:-.01em}
+  .lede{font-size:16px;line-height:1.55;color:var(--ink-soft);max-width:70ch}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
+  .toggle{display:inline-flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--line);
+    padding:9px 14px;border-radius:999px;font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer;
+    transition:.18s;user-select:none}
+  .toggle:hover{border-color:var(--wine);color:var(--wine)}
+  .toggle.on{background:var(--wine);border-color:var(--wine);color:#fff}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px rgba(198,154,63,.25)}
+  .toggle.on .dot{background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.3)}
+  .hint{font-size:12.5px;color:var(--ink-soft)}
+
+  .stage{position:relative;margin-top:22px;border-radius:18px;overflow:hidden;border:1px solid var(--line);
+    box-shadow:var(--shadow);background:var(--paper-2)}
+  .browser-bar{display:flex;align-items:center;gap:8px;padding:11px 15px;background:#efe6d6;border-bottom:1px solid var(--line)}
+  .tl{width:11px;height:11px;border-radius:50%}
+  .tl.r{background:#e0685c}.tl.y{background:#e2b43f}.tl.g{background:#5bb06a}
+  .url{margin-left:12px;font-size:12px;color:var(--ink-soft);background:#fff;border:1px solid var(--line);
+    border-radius:7px;padding:5px 12px;flex:1;max-width:460px;font-family:var(--sans)}
+  .url b{color:var(--wine)}
+
+  .stage-body{position:relative;height:clamp(760px,88vh,980px)}
+
+  .grid{position:absolute;inset:0;overflow:hidden;display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;padding:20px;align-content:start}
+  .gcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;opacity:.9}
+  .gbottle{height:92px;border-radius:8px;margin-bottom:10px;
+    background:linear-gradient(160deg,#efe7d8,#e6dcc8)}
+  .gname{height:9px;width:85%;background:#e4d9c6;border-radius:4px;margin-bottom:6px}
+  .gmeta{height:7px;width:55%;background:#eadfcc;border-radius:4px}
+  .gprice{margin-top:11px;font-size:13px;font-weight:700;color:var(--ink-soft)}
+
+  .scrim{position:absolute;inset:0;background:rgba(33,20,12,.46);backdrop-filter:blur(1.5px)}
+
+  .drawer{position:absolute;top:0;right:0;height:100%;width:min(430px,92%);background:var(--card);
+    display:flex;flex-direction:column;box-shadow:-20px 0 50px -20px rgba(40,20,10,.5)}
+  .d-scroll{overflow-y:auto;flex:1;scroll-behavior:smooth}
+
+  .d-top{position:sticky;top:0;z-index:5;background:rgba(255,253,248,.94);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);padding:12px 18px;display:flex;align-items:center;gap:12px}
+  .icon-btn{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:#fff;cursor:pointer;
+    display:grid;place-items:center;font-size:15px;color:var(--ink-soft);transition:.15s}
+  .icon-btn:hover{border-color:var(--wine);color:var(--wine)}
+  .d-top .ttl{flex:1;min-width:0}
+  .d-top .ttl b{display:block;font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .d-top .ttl span{font-size:11.5px;color:var(--ink-soft)}
+  .mini-add{display:inline-flex;align-items:center;gap:7px;background:var(--wine);color:#fff;border:none;
+    border-radius:9px;padding:9px 13px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.15s}
+  .mini-add:hover{background:var(--wine-deep)}
+
+  .hero{padding:20px 20px 18px}
+  .hero-row{display:flex;gap:16px}
+  .bottle{width:84px;flex:none;border-radius:12px;position:relative;overflow:hidden;
+    background:linear-gradient(165deg,#fbf7ee,#eadfca);border:1px solid var(--line);display:grid;place-items:center}
+  .bottle svg{height:116px}
+  .hero-main{flex:1;min-width:0}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}
+  .tag{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--wine);
+    background:#f7e9ec;border:1px solid #f0d7dd;border-radius:999px;padding:3px 9px}
+  .tag.n{color:var(--ink-soft);background:#f1ece1;border-color:var(--line)}
+  .wine-name{font-family:var(--serif);font-size:23px;line-height:1.08;margin-bottom:4px;letter-spacing:-.01em}
+  .pron{font-size:12px;color:var(--ink-soft);margin-bottom:12px}
+  .why{font-size:14px;line-height:1.5;color:var(--ink);background:#f3efe4;border-left:3px solid var(--gold);
+    padding:10px 12px;border-radius:0 8px 8px 0;margin:4px 0 14px}
+  .why b{color:var(--wine)}
+
+  .snap-h{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);font-weight:700;margin-bottom:9px}
+  .snap{display:grid;grid-template-columns:1fr 1fr;gap:9px 14px;margin-bottom:4px}
+  .meter .ml{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+  .meter .ml b{font-weight:700}
+  .meter .ml span{color:var(--ink-soft)}
+  .track{height:6px;border-radius:4px;background:#ece2d0;overflow:hidden}
+  .fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--wine))}
+
+  .flavours{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0 4px}
+  .fl{font-size:12.5px;font-weight:600;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 11px;color:var(--ink)}
+
+  .fold{position:relative;margin:20px 0 4px;border-top:2px dashed var(--gold);height:0}
+  .fold span{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--card);
+    padding:0 12px;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:800}
+
+  .acc{border-bottom:1px solid var(--line)}
+  .acc:first-of-type{border-top:1px solid var(--line)}
+  .acc-h{width:100%;text-align:left;background:none;border:none;cursor:pointer;padding:15px 20px;
+    display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;color:var(--ink);font-family:var(--sans)}
+  .acc-h:hover{color:var(--wine)}
+  .acc-h .chev{margin-left:auto;transition:.2s;color:var(--ink-soft);font-size:12px}
+  .acc.open .acc-h .chev{transform:rotate(180deg)}
+  .acc-c{display:none;padding:0 20px 18px;font-size:13.5px;line-height:1.6;color:var(--ink-soft)}
+  .acc.open .acc-c{display:block}
+  .acc-c p{margin-bottom:10px}
+  .spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .spec{background:#fff;padding:9px 11px}
+  .spec .k{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:2px}
+  .spec .v{font-size:13px;font-weight:600;color:var(--ink)}
+  .recipes{display:flex;flex-direction:column;gap:8px}
+  .rec{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:9px;padding:9px 11px}
+  .rec .ri{width:30px;height:30px;border-radius:7px;background:linear-gradient(150deg,#f1e3d0,#e7d7bd);flex:none}
+  .rec b{font-size:13px;color:var(--ink);display:block}
+  .rec span{font-size:11.5px}
+
+  .d-foot{border-top:1px solid var(--line);background:rgba(255,253,248,.96);backdrop-filter:blur(8px);
+    padding:13px 18px;display:flex;align-items:center;gap:12px}
+  .d-foot .pr{font-family:var(--serif);font-size:22px;font-weight:700}
+  .d-foot .pr small{font-size:12px;color:var(--ink-soft);font-weight:400;font-family:var(--sans)}
+  .add-cta{flex:1;background:var(--wine);color:#fff;border:none;border-radius:11px;padding:13px;font-size:15px;
+    font-weight:800;letter-spacing:.02em;cursor:pointer;transition:.15s}
+  .add-cta:hover{background:var(--wine-deep)}
+
+  .pin{position:absolute;z-index:30;width:24px;height:24px;border-radius:50%;background:var(--gold);color:#2a1d06;
+    font-weight:800;font-size:12px;display:grid;place-items:center;cursor:default;
+    box-shadow:0 3px 10px rgba(0,0,0,.3),0 0 0 3px rgba(246,241,231,.9);
+    opacity:0;transform:scale(.4);transition:.25s;pointer-events:none}
+  .annot-on .pin{opacity:1;transform:scale(1);pointer-events:auto}
+  .pin:hover .tip{opacity:1;transform:translateY(0)}
+  .tip{position:absolute;right:30px;top:50%;transform:translateY(6px);width:210px;background:var(--ink);color:#f6f1e7;
+    font-size:11.5px;line-height:1.45;padding:9px 11px;border-radius:9px;opacity:0;transition:.2s;pointer-events:none;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);font-weight:500;letter-spacing:0}
+  .tip b{color:var(--gold);display:block;margin-bottom:2px;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+
+  .legend{margin-top:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+  .lc{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px 17px}
+  .lc .num{width:24px;height:24px;border-radius:50%;background:var(--gold);color:#2a1d06;font-weight:800;font-size:12px;
+    display:grid;place-items:center;margin-bottom:10px}
+  .lc h3{font-size:14.5px;margin-bottom:6px;letter-spacing:-.01em}
+  .lc p{font-size:13px;line-height:1.5;color:var(--ink-soft)}
+  .lc .fix{display:inline-block;margin-top:9px;font-size:11px;font-weight:700;color:var(--good);
+    background:#e8f1e9;border:1px solid #cfe3d4;border-radius:999px;padding:3px 9px}
+
+  .foot-note{margin-top:24px;font-size:12.5px;color:var(--ink-soft);line-height:1.55;max-width:75ch}
+  .foot-note b{color:var(--ink)}
+
+  @media (max-width:720px){
+    .snap{grid-template-columns:1fr}
+    .spec-grid{grid-template-columns:1fr}
+    .tip{right:auto;left:30px}
+  }
+  @media print{
+    body{padding:0}
+    .stage{box-shadow:none}
+    .controls,.annot-on .pin,.pin{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div class="kicker">Product drawer, redesign sketch</div>
+    <h1>Same drawer, re-stacked so the decision comes first</h1>
+    <p class="lede">A tighter version of the Good Pair Days wine drawer. Everything a shopper needs to say yes sits above the fold. The deeper reading (region history, winemaking notes, guides) folds away underneath. Built from the real Quarisa '30 Mile' Shiraz panel.</p>
+    <div class="controls">
+      <button class="toggle on" id="annotBtn"><span class="dot"></span>Annotations on</button>
+      <span class="hint">Hover the gold pins, or open the sections inside the drawer.</span>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="browser-bar">
+      <span class="tl r"></span><span class="tl y"></span><span class="tl g"></span>
+      <div class="url">goodpairdays.com/au/wines/<b>?wine=quarisa-30-mile-shiraz-2023</b></div>
+    </div>
+
+    <div class="stage-body">
+      <div class="grid" aria-hidden="true" id="grid"></div>
+      <div class="scrim"></div>
+
+      <div class="pin" style="top:52px;right:398px" id="pinUrl">1
+        <div class="tip"><b>Shareable URL</b>The drawer writes <code>?wine=</code> to the address bar, so a link, a refresh or the back button all land where you expect, and search engines can read the page.</div>
+      </div>
+      <div class="pin" style="top:120px;right:30px">2
+        <div class="tip"><b>One add control</b>One primary Add sits in the sticky header and footer. No second add or bookmark button fighting it for attention.</div>
+      </div>
+      <div class="pin" style="top:300px;right:30px">3
+        <div class="tip"><b>Decision first</b>Taste snapshot, flavours and the one line hook sit above the fold, where people glance first.</div>
+      </div>
+      <div class="pin" style="top:540px;right:30px">4
+        <div class="tip"><b>Fold line</b>Everything a buyer needs clears this line. The deep content is one tap below, not a long scroll away.</div>
+      </div>
+      <div class="pin" style="top:640px;right:30px">5
+        <div class="tip"><b>Progressive disclosure</b>Details, specs, pairing, region and guides fold into sections instead of stacking into one tall column.</div>
+      </div>
+      <div class="pin" style="bottom:26px;right:30px">6
+        <div class="tip"><b>Always-visible CTA</b>Price and Add stay pinned to the footer however far you scroll.</div>
+      </div>
+
+      <aside class="drawer">
+        <div class="d-top">
+          <button class="icon-btn" title="Close">✕</button>
+          <div class="ttl">
+            <b>Quarisa '30 Mile' Shiraz 2023</b>
+            <span>Shiraz, South Eastern Australia</span>
+          </div>
+          <button class="icon-btn" title="Save">♡</button>
+          <button class="mini-add">Add, $15</button>
+        </div>
+
+        <div class="d-scroll" id="dscroll">
+          <div class="hero">
+            <div class="hero-row">
+              <div class="bottle">
+                <svg viewBox="0 0 60 150" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="23" y="4" width="14" height="34" rx="3" fill="#4a2b2f"/>
+                  <path d="M23 36 Q22 48 18 58 Q14 68 14 86 L14 140 Q14 146 20 146 L40 146 Q46 146 46 140 L46 86 Q46 68 42 58 Q38 48 37 36 Z" fill="#5c0f26"/>
+                  <rect x="16" y="92" width="28" height="40" rx="2" fill="#f3ead6"/>
+                  <rect x="20" y="99" width="20" height="3" rx="1.5" fill="#7b1733"/>
+                  <rect x="22" y="106" width="16" height="2" rx="1" fill="#b89b6a"/>
+                  <rect x="24" y="112" width="12" height="2" rx="1" fill="#b89b6a"/>
+                </svg>
+              </div>
+              <div class="hero-main">
+                <div class="tags">
+                  <span class="tag">Red</span>
+                  <span class="tag n">Vegan</span>
+                  <span class="tag n">14%</span>
+                </div>
+                <div class="wine-name">Quarisa '30 Mile' Shiraz 2023</div>
+                <div class="pron">"shir-azz" · screw cap · 1 to 3 yrs</div>
+              </div>
+            </div>
+
+            <div class="why">A <b>true-blue Aussie Shiraz</b> for peppered steak off the barbie, with smoky charred meat notes and dark plums bursting through.</div>
+
+            <div class="snap-h">Taste at a glance</div>
+            <div class="snap">
+              <div class="meter"><div class="ml"><b>Body</b><span>Medium</span></div><div class="track"><div class="fill" style="width:60%"></div></div></div>
+              <div class="meter"><div class="ml"><b>Tannins</b><span>Medium</span></div><div class="track"><div class="fill" style="width:58%"></div></div></div>
+              <div class="meter"><div class="ml"><b>Fruitiness</b><span>Some</span></div><div class="track"><div class="fill" style="width:50%"></div></div></div>
+              <div class="meter"><div class="ml"><b>Sweetness</b><span>Low</span></div><div class="track"><div class="fill" style="width:12%"></div></div></div>
+              <div class="meter"><div class="ml"><b>Acidity</b><span>Low</span></div><div class="track"><div class="fill" style="width:22%"></div></div></div>
+              <div class="meter"><div class="ml"><b>Oak</b><span>Some</span></div><div class="track"><div class="fill" style="width:40%"></div></div></div>
+            </div>
+
+            <div class="flavours">
+              <span class="fl">Blueberry</span><span class="fl">Dark Fruit</span><span class="fl">Plum</span>
+              <span class="fl">Char</span><span class="fl">Pepper</span><span class="fl">Smoky</span>
+            </div>
+
+            <div class="fold"><span>Above the fold ends here</span></div>
+          </div>
+
+          <div class="acc open">
+            <button class="acc-h">Pairing &amp; recipes <span class="chev">▾</span></button>
+            <div class="acc-c">
+              <p>Made for bold, comforting food. Pair it with grilled steaks, BBQ ribs or slow-cooked lamb shanks. For cheese, reach for aged cheddar or blue.</p>
+              <div class="recipes">
+                <div class="rec"><div class="ri"></div><div><b>BBQ Sausage Wraps</b><span>simple · 1 min read</span></div></div>
+                <div class="rec"><div class="ri"></div><div><b>Perfect Lamb Ribs</b><span>complex · 1 min read</span></div></div>
+                <div class="rec"><div class="ri"></div><div><b>Roasted Mushroom Ragu</b><span>vegetarian · 1 min read</span></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="acc">
+            <button class="acc-h">The details <span class="chev">▾</span></button>
+            <div class="acc-c">
+              <p>This is a true-blue Aussie style of Shiraz to have with your peppered steak fresh off the barbie. Smoky, charred meat notes with black pepper and plenty of dark plums bursting through.</p>
+              <p>Shiraz does well across climates. Warm regions give you a luscious, fruity glass, cooler ones lean savoury and peppery. Both are good drinking, so it comes down to taste.</p>
+            </div>
+          </div>
+
+          <div class="acc">
+            <button class="acc-h">Specs <span class="chev">▾</span></button>
+            <div class="acc-c">
+              <div class="spec-grid">
+                <div class="spec"><div class="k">Region</div><div class="v">South Eastern Australia</div></div>
+                <div class="spec"><div class="k">Grape</div><div class="v">Shiraz</div></div>
+                <div class="spec"><div class="k">Winemaker</div><div class="v">30 Mile</div></div>
+                <div class="spec"><div class="k">Vintage</div><div class="v">2023</div></div>
+                <div class="spec"><div class="k">Alcohol</div><div class="v">14%</div></div>
+                <div class="spec"><div class="k">Closure</div><div class="v">Screw cap</div></div>
+                <div class="spec"><div class="k">Cellar</div><div class="v">1 to 3 years</div></div>
+                <div class="spec"><div class="k">Serve</div><div class="v">15 to 18°C</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="acc">
+            <button class="acc-h">Region &amp; guides <span class="chev">▾</span></button>
+            <div class="acc-c">
+              <p>South Eastern Australia stretches from Victoria to New South Wales and makes over a third of the country's wine, from rich, spicy Shiraz to crisp Chardonnay.</p>
+              <p>Related reads: Australia region guide, Oak in winemaking, Red wine 101, Vegan wine.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-foot">
+          <div class="pr">$15 <small>/ bottle</small></div>
+          <button class="add-cta">Add bottle</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="lc"><div class="num">1</div><h3>URL that actually links</h3>
+      <p>The current drawer probably leaves the address bar untouched, so this wine cannot be shared, bookmarked or found in search, even though it already has its own page.</p>
+      <span class="fix">Fixes: sharing, SEO, back button</span></div>
+    <div class="lc"><div class="num">2</div><h3>One add, one save</h3>
+      <p>The live panel shows the add and bookmark controls twice. Dropping to one primary action removes the moment where you wonder which button to press.</p>
+      <span class="fix">Fixes: duplicate controls</span></div>
+    <div class="lc"><div class="num">3</div><h3>Decision content up top</h3>
+      <p>Taste snapshot, flavours and a one line hook lead the panel, so someone skimming can read the wine in a couple of seconds.</p>
+      <span class="fix">Fixes: buried depth</span></div>
+    <div class="lc"><div class="num">5</div><h3>Collapse the encyclopedia</h3>
+      <p>Details, specs, pairing, region and guides become sections you open on demand. The drawer stops reading like a full product page turned on its side.</p>
+      <span class="fix">Fixes: long narrow scroll</span></div>
+    <div class="lc"><div class="num">6</div><h3>CTA that never leaves</h3>
+      <p>Price and Add stay pinned top and bottom, so you can buy from any scroll position, including a phone sheet.</p>
+      <span class="fix">Fixes: mobile reachability</span></div>
+    <div class="lc"><div class="num">4</div><h3>An honest fold</h3>
+      <p>The dashed line marks where enough to decide ends. Anything below it has to earn the spot as depth.</p>
+      <span class="fix">Design principle</span></div>
+  </div>
+
+  <p class="foot-note"><b>What I kept:</b> the overlay over the grid, the in-drawer add to cart, and the taste and pairing content. Those are the parts already pulling their weight. <b>What changed is the order and the emphasis.</b> This is a sketch to react to, not a spec. The taste meter positions are my read of the panel wording (medium body, low sweetness, low acidity, some fruitiness, medium tannins, some oak), and the bottle is a drawn stand-in because I did not have the real product image.</p>
+
+</div>
+
+<script>
+  const grid=document.getElementById('grid');
+  const prices=['$15','$20','$15','$25','$55','$50','$23','$30','$29','$35','$18','$42','$16','$27','$33','$21','$48','$19','$24','$39','$17','$31'];
+  prices.forEach(p=>{
+    const c=document.createElement('div');c.className='gcard';
+    c.innerHTML='<div class="gbottle"></div><div class="gname"></div><div class="gmeta"></div><div class="gprice">'+p+'</div>';
+    grid.appendChild(c);
+  });
+  const btn=document.getElementById('annotBtn'), stage=document.getElementById('stage');
+  stage.classList.add('annot-on');
+  btn.addEventListener('click',()=>{
+    const on=btn.classList.toggle('on');
+    btn.innerHTML=on?'<span class="dot"></span>Annotations on':'<span class="dot"></span>Annotations off';
+    stage.classList.toggle('annot-on',on);
+  });
+  document.querySelectorAll('.acc-h').forEach(h=>{
+    h.addEventListener('click',()=>h.parentElement.classList.toggle('open'));
+  });
+</script>
+</body>
+</html>
